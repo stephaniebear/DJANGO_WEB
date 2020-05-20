@@ -1,0 +1,232 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+  {% load static %}
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <script src="/static/js/formAddResult.js" type="text/javascript"></script>
+  <!-- <script src="/static/js/jquery.validate.js"></script> -->
+{% endblock %}
+
+{% block content %}
+
+<div align="center">
+    <h1>Add Office</h1>
+</div>
+
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+</div>
+{% endif %}
+
+<form action="/formAddResult/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="Number"><b>Number</b></label>
+        <select class="form-control" name="number">
+            {% for office in offices %}
+                <option value="{{office.number}}">{{office.number}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label for="Province"><b>Province</b></label>
+      <select class="form-control" name="province" id="office_provinces">
+        <option value="0">- Please Select Provinces -</option>
+        {% for province in provinces %}
+        <option value="{{province.province}}">{{province.province}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Name"><b>Name</b></label>
+        <select class="form-control" name="name" id="office_name" disabled="True">
+          <option value="0">- Please Select Office Name -</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label for="Type"><b>Type</b></label>
+      <BR>
+      <div class="form-check-inline">
+        <div class="form-check">
+          <input  id="office_type_A" type="radio" class="form-check-input" name="type" value="A" checked>
+          <label class="form-check-label" for="office_type_A">A</label>
+        </div>
+        <div class="form-check">
+          <input  id="office_type_B" type="radio" class="form-check-input" name="type" value="B">
+          <label class="form-check-label" for="office_type_A">B</label>
+        </div>
+        <div class="form-check">
+          <input  id="office_type_C" type="radio" class="form-check-input" name="type" value="C">
+          <label class="form-check-label" for="office_type_A">C</label>
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="form-group">
+        <label for="Specifications"><b>Specifications</b></label>
+    </div> 
+
+    <fieldset class="form-group">
+        <div class="row">
+          <legend class="col-form-label col-sm-2 pt-0">General</legend>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="specs_general" value="1" checked>
+                Pass
+              </label>
+            </div>
+            <div class="form-check" id="specs_general">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_general" value="0">
+                Improve
+              </label>
+            </div>
+          </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="form-group">
+        <div class="row">
+          <legend class="col-form-label col-sm-2 pt-0">Electrical General</legend>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_elec_general" value="1" checked>
+                Pass
+              </label>
+            </div>
+            <div class="form-check" id="specs_elec_general">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_elec_general" value="0">
+                Improve
+              </label>
+            </div>
+          </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="form-group">
+        <div class="row">
+          <legend class="col-form-label col-sm-2 pt-0">Electrical Techniques</legend>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_elec_techniques" value="1" checked>
+                Pass
+              </label>
+            </div>
+            <div class="form-check" id="specs_elec_techniques">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="specs_elec_techniques" value="0">
+                Improve
+              </label>
+            </div>
+          </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="form-group">
+        <div class="row">
+          <legend class="col-form-label col-sm-2 pt-0">Network General</legend>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_network_general" value="1" checked>
+                Pass
+              </label>
+            </div>
+            <div class="form-check" id="specs_network_general">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_network_general" value="0">
+                Improve
+              </label>
+            </div>
+          </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="form-group">
+        <div class="row">
+          <legend class="col-form-label col-sm-2 pt-0">Network Techniques</legend>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_network_techniques" value="1" checked>
+                Pass
+              </label>
+            </div>
+            <div class="form-check" id="specs_network_techniques">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="specs_network_techniques" value="0">
+                Improve
+              </label>
+            </div>
+          </div>
+        </div>
+    </fieldset>
+
+    <div class="form-group">
+        <label for="Book Number" ><b>Book Number</b></label>
+        <input type="text" class="form-control" name="book_number" id="book_number">
+    </div>
+
+    <div class="form-group">
+      <label for="Descriptions"><b>Descriptions</b></label>
+      <textarea type="text" class="form-control" name="descriptions"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="Files"><b>Upload Sheet</b></label>
+      <input style="padding:2.5px;" class="form-control" type="file" name="files" id="files" multiple/>
+    </div>
+
+    <div class="form-group">
+      <input type="submit" id="submit" class="btn btn-success" value="Save">
+    </div>
+</form>
+
+<script>
+  $(document).ready(function(){
+    $('#submit').click(function(){
+
+      // console.log($('#files').val())
+      // // if($('#book_number').val() == ''){
+      // //   console.log('1111')
+      // // }
+      // return false;
+
+      if($('#office_provinces').val() == '0'){
+        
+        $('#office_provinces').addClass('is-invalid')
+        $('#office_provinces').focus()
+        return false;
+      }
+      else if($('#office_name').val() == '0'){
+        $('#office_name').addClass('is-invalid')
+        $('#office_name').focus()
+        return false;
+      }
+      else if($('#book_number').val() == ''){
+        $('#book_number').addClass('is-invalid')
+        $('#book_number').focus()
+        return false;
+      }
+      else if($('#files').val() == ''){
+        $('#files').addClass('is-invalid')
+        $('#files').focus()
+        return false;
+      }
+    })
+  })
+</script>
+
+{% endblock %}

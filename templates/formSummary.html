@@ -1,0 +1,173 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 align="center">Result</h1>
+<span class="col-md-6">
+    <form class="form-inline my-2 my-lg-0" method="GET" action="/resultForm">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value="{{request.GET.search}}" name="search" disabled="true">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" disabled="true">Search</button>
+    </form>
+</span>
+
+<!--
+<span class="col-md-6">
+    <form class="form-inline my-2 my-lg-0" method="GET" action="/formEditResult">
+        <select class="form-control" name="edit">
+        {% for result in results %}
+            <option value="{{result.uuid}}">{{result.name}}</option>
+        {% endfor %}
+        </select>
+        <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Edit</button>
+    </form>
+</span>
+
+<span class="col-md-6">
+    <form class="form-inline my-2 my-lg-0" method="GET" action="/deleteResult">
+        <select class="form-control" name="delete">
+            {% for result in results %}
+                <option value="{{result.name}}?{{result.book_files}}">{{result.name}}</option>
+            {% endfor %}
+            </select>
+            <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Delete</button>
+    </form>
+</span>
+-->
+
+
+<div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr align="center">
+            <!-- <th scope="col">#</th> --> 
+            <th scope="col">Number</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Book Number</th>
+            <th scope="col">Descriptions</th>
+            <th scope="col">General</th>
+            <th scope="col">Electical General</th>
+            <th scope="col">Electical Techniques</th>
+            <th scope="col">Network General</th>
+            <th scope="col">Network Techniques</th>
+            <th scope="col">Create by ID</th>
+            <th scope="col">Create at</th>
+            <th scope="col">Update by</th>
+            <th scope="col">Update at</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+            <tr align="center">
+                <!-- <th scope="row">{{result.uuid}}</th> -->
+                <th scope="row">{{result.number}}</td>
+                <td>{{result.name}}</td>
+                <td>{{result.types}}</td>
+                <td><a class="text-decoration-none" id="ModalCenter" name="ModalCenter" data-toggle="modal" data-target="#exampleModalCenter" value="{{result.result_id}}" href="{{result.path}}">{{result.book_number}}</a></td>
+                <!-- <td><p class="text-decoration-none" id="ModalCenter" name="ModalCenter" data-toggle="modal" data-target="#exampleModalCenter" value="{{result.result_id}}">{{result.book_number}}</p></td> -->
+                <td>{{result.descriptions}}</td>
+                <td>
+                    {% if result.g == 1 %}
+                        <i class="fa fa-check"></i>
+                    {% else %}
+                        <i class="fa fa-times"></i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if result.e_g == 1 %}
+                        <i class="fa fa-check"></i>
+                    {% else %}
+                        <i class="fa fa-times"></i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if result.e_t == 1 %}
+                        <i class="fa fa-check"></i>
+                    {% else %}
+                        <i class="fa fa-times"></i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if result.n_g == 1 %}
+                        <i class="fa fa-check"></i>
+                    {% else %}
+                        <i class="fa fa-times"></i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if result.n_t == 1 %}
+                        <i class="fa fa-check"></i>
+                    {% else %}
+                        <i class="fa fa-times"></i>
+                    {% endif %}
+                </td>
+                <td>{{result.create_by_id}}</td>
+                <td>{{result.create_at}}</td>
+                <td>{{result.update_by}}</td>
+                <td>{{result.update_at}}</td>
+                <td>
+                    <form class="form-inline my-2 my-lg-0" method="GET" action="/formEditResult">
+                        <button class="btn btn-outline-warning my-2 my-sm-0" name="edit" value="{{result.result_id}}" type="submit">Edit</button>
+                    </form>
+                </td>
+                <td>
+                    <form class="form-inline my-2 my-lg-0" method="GET" action="/deleteResult">
+                        <button class="btn btn-outline-danger my-2 my-sm-0" name="delete" value="{{result.result_id}}" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<!-- <p class="text-decoration-none" id="ModalCenter" name="ModalCenter" data-toggle="modal" data-target="#exampleModalCenter" value="Hello World">Launch demo modal</p> -->
+  
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="content">
+                Result_id > 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.text-decoration-none').click(function(){
+            var href = $(this).attr('value')
+            console.log(href)
+            $('#content').html('Result_id > ')
+            $('#content').append($('p[name="ModalCenter"]').attr('value'))
+            // $.ajax({
+            //     url: '/getLocationFile/',
+            //     type: 'GET',
+            //     dataType: 'json',
+            //     data: {
+            //         uuid : uuid
+            //     },
+            //     success: function( response ){
+            //         console.log(response)
+            //         for(let i = 0; i < response.length ; i++){
+            //             $('#office_name').append('<option value="'+ response[i].fields.name +'">'+ response[i].fields.name +'</option>')
+            //         }
+            //     }
+            // })
+        })
+    })
+</script>
+{% endblock %}

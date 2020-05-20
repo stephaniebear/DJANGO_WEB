@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+    <title>Like Post App</title>
+{% endblock %}
+
+{% block content %}
+    <p id="message"></p>
+    <select id="item">
+    </select>
+    {% for office in offices %}
+        <h3>{{ office.office_province }}</h3>
+        <a class="likebutton" id="like{{office.office_province}}" href="#" data-catid="{{ office.office_province }}">Like</a>
+    {% endfor %}
+
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script type="text/javascript">
+    $('document').ready(function () {
+        $('.likebutton').click(function(){
+            var catid;
+            catid = $(this).attr("data-catid");
+            console.log('catid', catid);
+            $.ajax({
+                url: '/likePost/',
+                type: 'GET',
+                dataType: 'json',
+                data:{
+                        post_id : catid
+                },
+                success: function( data ) {
+                    if (data.is_taken) {
+                        alert("A user with this username already exists.");
+                    }
+                    else{
+                        //alert(data)
+                    }
+                    $( '#like'+ catid ).remove()
+                    $( '#message' ).text(data)
+
+                    console.log(data.length)
+                    console.log(data)
+
+                    $( '#item' ).html("")
+                    for(let i = 0; i < data.length;i++){
+                        console.log(data[i].fields.office_province)
+                        $( '#item' ).append('<option>' + data[i].fields.office_name + '</option>')
+                    }
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}

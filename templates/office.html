@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1 align="center">Office</h1>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr align="center">
+            <th scope="col">Province</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Size</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for office in offices %}
+            <tr align="center">
+                <th scope="row">{{office.province}}</td>
+                <td>{{office.name}}</td>
+                <td>{{office.types}}</td>
+                <td>{{office.size}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

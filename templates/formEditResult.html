@@ -1,0 +1,152 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div align="center">
+    <h1>Edit</h1>
+</div>
+
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if ResultQuerys %}
+<div class="alert alert-danger" role="alert">
+    {% for ResultQuery in ResultQuerys %}
+        {{ResultQuery.uuid}}
+        {{ResultQuery.name}}
+        {{ResultQuery.result_flag}}
+        {{ResultQuery.create_at}}
+        {{ResultQuery.uuid}}
+        {{ResultQuery.type_office}}
+        {{ResultQuery.g}}
+        {{ResultQuery.e_g}}
+    {% endfor %}
+</div>
+{% endif %}
+
+<form action="/addResult/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for ResultQuery in ResultQuerys %}
+    <div class="form-group">
+        <label for="Office Number"><b>Office Number</b></label>
+        <input type="text" class="form-control" name="number" value="{{ResultQuery.number}}">
+    </div>
+    <div class="form-group">
+        <label for="Office Name"><b>Office Name</b></label>
+        <input type="text" class="form-control" name="name" value="{{ResultQuery.name}}">
+    </div>
+    <div class="form-group">
+        <label for="Type"><b>Type</b></label>
+        <BR>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="type" value="A" {% if ResultQuery.type_office == 'A' %} checked {% endif %}>A              
+            </label>
+        </div>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="type" value="B" {% if ResultQuery.type_office == 'B' %} checked {% endif %}>B
+            </label>
+        </div>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="type" value="C" {% if ResultQuery.type_office == 'C' %} checked {% endif %}>C
+            </label>
+            
+        </div>
+        
+    </div>
+    <div class="form-group">
+        <label for="Specifications"><b>Specifications</b></label>
+    </div>
+    <div class="form-group">
+        <label class="radio-inline">General : </label>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_general" value="1" {% if ResultQuery.g == 1.0 %} checked {% endif %}>Pass
+            </label>
+        </div>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_general" value="0" {% if ResultQuery.g == 0.0 %} checked {% endif %}>Not pass
+            </label>
+        </div>
+        
+    </div>
+    <div class="form-group">
+        <label class="radio-inline">Electrical</label>
+        <br>
+        <label class="radio-inline">General : </label>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_elec_general" value="1" {% if ResultQuery.e_g == 1.0 %} checked {% endif %}>Pass
+            </label>
+        </div>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_elec_general" value="0" {% if ResultQuery.e_g == 0.0 %} checked {% endif %}>Not Pass
+            </label>
+        </div>
+        <br>
+        <label class="radio-inline">Techniques : </label>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_elec_techniques" value="1" {% if ResultQuery.e_t == 1.0 %} checked {% endif %}>pass
+            </label>
+        </div>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_elec_techniques" value="0" {% if ResultQuery.e_t == 0.0 %} checked {% endif %}>Not pass
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="radio-inline">Network</label>
+        <br>
+        <label class="radio-inline">General : </label>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_network_general" value="1" {% if ResultQuery.n_g == 1.0 %} checked {% endif %}>Pass
+            </label>
+        </div>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_network_general" value="0" {% if ResultQuery.n_g == 0.0 %} checked {% endif %}>Not pass
+            </label>
+        </div>
+        <br>
+        <label class="radio-inline">Techniques :</label>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_network_techniques" value="1" {% if ResultQuery.n_t == 1.0 %} checked {% endif %}>Pass
+            </label>
+        </div>
+        <div class="form-check-inline">
+            <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="specs_network_techniques" value="0" {% if ResultQuery.n_t == 0.0 %} checked {% endif %}>Not pass
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Book Number"><b>Book Number</b></label>
+        <input type="text" class="form-control" name="book_number" value="{{ResultQuery.book_number}}">
+    </div>  
+
+    <div class="form-group">
+        <label for="BookFileInput"><b>Book file input</b></label>
+        <input type="file" class="form-control-file" name="book_file">
+    </div>
+
+    <div class="form-group">
+        <label for="Descriptions"><b>Descriptions</b></label>
+        <textarea type="text" class="form-control" name="descriptions" >{{ResultQuery.descriptions}}</textarea>
+    </div>
+    <input type="submit" class="btn btn-warning" value="     Edit     ">
+    {% endfor %}
+</form>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<h1 align="center">Login</h2>
+
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    <form action="/login/" method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="Show Path">This path : {{old_path}}</label>
+        </div>
+
+        <div class="form-group">
+            <label for="Username">Username</label>
+            <input type="text" class="form-control" name="username">
+        </div>
+        <div class="form-group">
+            <label for="Password">Password</label>
+            <input type="password" class="form-control" name="password">
+        </div>
+        <input type="submit" class="btn btn-success" value="Login">
+    </form>
+</div>
+
+
+{% endblock %}

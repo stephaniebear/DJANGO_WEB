@@ -1,0 +1,189 @@
+{% extends 'layout.html' %}
+{% block header %}
+    {% load static %}
+{% endblock %}
+
+{% block content %}
+<div align="center">
+    <h1>Add Asset</h1>
+</div>
+
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+</div>
+{% endif %}
+
+<form action="#" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="Code"><b>Code</b></label>
+        <input type="text" class="form-control" name="code" placeholder="7440-013-1145">
+    </div>
+
+    <div class="form-group">
+        <label for="Serial Number"><b>Serial Number</b></label>
+        <input type="text" class="form-control" name="serial_number" placeholder="SN598W455S">
+    </div>
+
+    <div class="form-group">
+        <label for="Quality"><b>Quality</b></label>
+        <input type="text" class="form-control" name="quality" placeholder="Good">
+    </div>
+
+    <div class="form-group">
+        <label for="Type"><b>Type</b></label>
+        <select class="form-control" name="type" id="type">
+          <option value="0">- Please Select Type -</option>
+          {% for asset_type in asset_types %}
+          <option value="{{asset_type.name}}">{{asset_type.name}}</option>
+          {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Brand"><b>Brand</b></label>
+        <select class="form-control" name="brand" id="brand" disabled="True"> 
+            <option value="0">- Please Select Brand -</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Model"><b>Model</b></label>
+        <select class="form-control" name="model" id="model" disabled="True">
+            <option value="0">- Please Select Model -</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Location"><b>Location</b></label>
+        <select class="form-control" name="location" id="location" >
+            <option value="0">- Please Select Location -</option>
+            {% for location in locations %}
+            <option value="{{location.location_id}}">{{location.name}} {{location.position}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Start Date"><b>Start Date</b></label>
+        <div class="col-md-2" style="padding-left:0px;">
+            <input class="form-control" type="date" id="start_date" name="start_date">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="Expire Date"><b>Expire Date</b></label>
+        <div class="col-md-2" style="padding-left:0px;">
+            <input class="form-control" type="date" id="expire_date" name="expire_date">
+        </div>
+    </div>
+    
+    <fieldset class="form-group">
+        <div class="row">
+          <legend class="col-form-label col-sm-2 pt-0"><b>Status</b></legend>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="status_flag"value="1" checked>
+                Active
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label" >
+                <input class="form-check-input" type="radio" name="status_flag"value="0">
+                Inactive
+              </label>
+            </div>
+          </div>
+        </div>
+    </fieldset>
+
+    <div class="form-group">
+        <input type="submit" class="btn btn-success" value="Save">
+    </div>
+
+</form>
+
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script type="text/javascript">
+    $('document').ready(function () {
+        let date_now = new Date()
+        let year = date_now.getFullYear()
+        let month = ((date_now.getMonth()+1) < 10 ? '0' + (date_now.getMonth()+1) : date_now.getMonth()+1)
+        let day = (date_now.getDate() < 10 ? '0' + date_now.getDate() : date_now.getDate() )
+        $('#start_date').attr('value' , year + '-' + month + '-' + day)
+        $('#expire_date').attr('value' , year + '-' + month + '-' + day)
+
+        //---------- GET BRAND ----------
+        $('#type').change(function(){
+            if($('#type').val() == 0) {
+                $('#brand').html('')
+                $('#brand').attr('disabled', 'True')
+                $('#brand').append('<option value="0">- Please Select Brand -</option>')
+                $('#model').html('')
+                $('#model').attr('disabled', 'True')
+                $('#model').append('<option value="0">- Please Select Model -</option>')
+                return
+            }
+
+            console.log('Changed')
+            type = $('#type').val()
+            $.ajax({
+                url: '/formAddAsset/',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    type : type
+                },
+                success: function( response ){
+                    console.log(response)
+                    $('#brand').html('')
+                    $('#brand').removeAttr('disabled', 'True')
+                    $('#brand').append('<option value="0">- Please Select Brand -</option>')
+                    for(let i = 0; i < response.length ; i++){
+                        $('#brand').append('<option value="'+ response[i].fields.brand +'">'+ response[i].fields.brand +'</option>')
+                    }
+                }   
+            })
+        })
+        // ------------------------------
+
+        //---------- GET MODEL ----------
+        $('#brand').change(function(){
+
+            if($('#brand').val() == 0) {
+                $('#model').html('')
+                $('#model').attr('disabled', 'True')
+                $('#model').append('<option value="0">- Please Select Model -</option>')
+                return
+            }
+            
+            console.log('Brand Changed')
+            brand = $('#brand').val()
+            $.ajax({
+                url: '/formAddAsset/',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    brand : brand
+                },
+                success: function( response ){
+                    console.log(response)
+                    $('#model').html('')
+                    $('#model').removeAttr('disabled', 'True')
+                    $('#model').append('<option value="0">- Please Select Model -</option>')
+                    for(let i = 0; i < response.length ; i++){
+                        $('#model').append('<option value="'+ response[i].pk +'">'+ response[i].fields.model +'</option>')
+                    }
+                }
+            })
+        })
+        // ------------------------------
+    })
+</script>
+
+{% endblock %}
