@@ -509,6 +509,7 @@ def addResult(request):
     return redirect('/resultForm')
 
 def result(request):
+
     #Query Data From Model
     #dataResult=Result.objects.all()
 
@@ -847,3 +848,19 @@ def formAddAssetType(request):
             
     return render(request,'formAddAssetType.html')
 #-----------------------------------------------
+
+
+#-------------------- SUMMARY --------------------
+def getFiles(request):
+    if request.method == 'GET':
+        print('getFiles')
+        result_id = request.GET['result_id'].replace('-','')
+        print('result_id : ',result_id)
+        query_set = Files.objects.filter(result_id=result_id)
+
+        print('Query Set : ', query_set)        
+
+        files = serializers.serialize("json", query_set)
+        print('files :', files)
+        return HttpResponse(files, content_type="application/json")
+#-------------------------------------------------

@@ -42,6 +42,8 @@ urlpatterns = [
     path('getProvinceName/',views.getProvinceName),
     path('getOfficeType/',views.getOfficeType),
 
+    path('getFiles/',views.getFiles),
+
     #---------- Asset ----------
     path('formAddAsset/',views.formAddAsset),
     path('formAddLocation/',views.formAddLocation),

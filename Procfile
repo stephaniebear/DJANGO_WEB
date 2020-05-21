@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: gunicorn DJANGO_PROJECT.wsgi --log-file -
