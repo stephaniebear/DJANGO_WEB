@@ -12,6 +12,8 @@ import pytz
 
 from django.core.files.storage import FileSystemStorage #BOOK FILES
 import os
+
+from django.contrib.auth.decorators import login_required #For login_required
 # Create your views here.
 
 def formAccount(request):
@@ -92,6 +94,8 @@ def formAddResult(request):
             result_flag = '1'
         else:
             result_flag = '0'
+
+        print('Result flag : ',result_flag)
 
         ##########################################################################################
         
@@ -524,7 +528,7 @@ def result(request):
     #    '''
 
     SQL = '''
-        SELECT r.result_id, f.path, r.number, r.name, r.types, r.book_number, r.`descriptions` ,
+        SELECT r.result_id, f.path, r.number, r.name, r.types, r.book_number, r.`descriptions` , r.result_flag,
             SUM(IF(specifications='General',rd.result_flag,0)) AS 'g',
             SUM(IF(specifications='Electical General',rd.result_flag,0)) AS 'e_g',
             SUM(IF(specifications='Electical Techniques',rd.result_flag,0)) AS 'e_t',
@@ -609,9 +613,14 @@ def addUser(request):
         messages.info(request,'Password ไม่ตรงกัน')
         return redirect('/createForm')
 
+# @login_required(redirect_field_name='my_redirect_field')
 def loginForm(request):
+    print('Request Path : ', request.path)
+    if request.user.is_authenticated:
+        redirect('/')
     return render(request,'login.html')
 
+# @login_required(redirect_field_name='my_redirect_field')
 def login(request):
     username=request.POST['username']
     password=request.POST['password']
@@ -626,6 +635,10 @@ def login(request):
         #print(request.session.get_expiry_date())
         auth.login(request,user)
         return redirect('/')
+
+        # print('Request : %s'% request.get_full_path)
+        # return redirect('/login/?next=%s' % request.path)
+
         #return render(request, '/',{'username':loginPOST['username']})
         #return render(request,'layout.html',{'username':loginPOST})
     else:
@@ -719,11 +732,6 @@ def deleteResult(request):
 
     return redirect('/resultForm')
 
-def formLoadTest(request):
-    print("form Load")
-    offices = Office.objects.values('office_province').distinct().order_by('office_province')
-    return render(request, "formTest.html", {'offices' : offices})
-
 def likePost(request):
     print('On Function GET')
     if request.method == 'GET':
@@ -740,6 +748,8 @@ def likePost(request):
         print('Request Not a GET')  
         return HttpResponse("Request method is not a GET")
 
+
+@login_required(login_url='/loginForm/')
 def office(request):
     offices = Office.objects.all().order_by('number')
     return render(request, "office.html", {'offices' : offices})
@@ -863,4 +873,30 @@ def getFiles(request):
         files = serializers.serialize("json", query_set)
         print('files :', files)
         return HttpResponse(files, content_type="application/json")
+
+def getResult(request):
+    if request.method == 'GET':
+        print('getResult')
+        result_id = request.GET['result_id'].replace('-','')
+        print('result_id : ',result_id)
+        query_set = ResultDetails.objects.filter(result_id=result_id)
+
+        print('Query Set : ', query_set)        
+
+        result = serializers.serialize("json", query_set)
+        print('Result :', result)
+        return HttpResponse(result, content_type="application/json")
 #-------------------------------------------------
+
+
+
+#-------------------- Check List --------------------
+
+def formAddCheckList(request):
+    return render(request,'formAddCheckList.html')
+
+
+def formCheckList(request):
+    return render(request,'formCheckList.html')
+
+#----------------------------------------------------

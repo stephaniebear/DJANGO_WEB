@@ -1,0 +1,96 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1 align="center">Add Check List</h1>
+
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    <div class="form-group">
+        <label for="Name"><b>Name</b></label>
+        <input class="form-control" type="text">
+    </div>
+    <div class="form-group">
+        <button class="btn btn-outline-success" id="btnAddCheckList">Add Checklist</button>
+        <button class="btn btn-outline-success" id="btnAddRadioName">Add Radio name</button>
+    </div>
+</div>
+
+<form method="POST" id="add_name" action="#">
+{% csrf_token %}
+    <div class="container">
+        <div class="form-group" id="addCheckList">
+            <label for="Checklist"><b>Checklist</b></label>
+        </div>
+        <div class="form-group" id="addRadioName">
+            <label for="Checklist"><b>Radio</b></label>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-success" id="submit" value="Add Checklist">
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        let i = 0
+        let j = 0
+        $('#btnAddCheckList').click(function(){
+            $('#addCheckList').append('<div class="row" id="checkList' + i + '"><div class="col"><input class="name_list form-control" type="text" name="CheckList[]"></div><div class="col"><button class="btn_delete btn btn-outline-danger" id="' + i + '">X</button></div></div>')
+            i++
+        })
+
+        $('#btnAddRadioName').click(function(){
+            $('#addRadioName').append('<div class="row" id="radioName' + i + '"><div class="col"><input class="name_list form-control" type="text" name="RadioName[]"></div><div class="col"><button class="btn_radio_delete btn btn-outline-danger" id="' + i + '">X</button></div></div>')
+            i++
+        })
+
+        $(document).on('click','.btn_delete', function(){
+            let ID = $(this).attr('id')
+            console.log($(this).attr('id'))
+            $('#checkList' + ID).remove()
+        })
+
+        $(document).on('click','.btn_radio_delete', function(){
+            let ID = $(this).attr('id')
+            console.log($(this).attr('id'))
+            $('#radioName' + ID).remove()
+        })
+
+        // $('#submit').click(function(){
+        //     console.log('Submit')
+        //     let form_datav = ''
+        //     $('#name_list').each(function(){
+        //         form_datav += $(this).val()
+        //         alert(form_datav)
+        //     })
+        //     alert(form_datav)
+        //     // console.log($(this).serialize())
+        // })
+        
+        $('#add_name').on('submit', function(event){
+            event.preventDefault
+            let i = 0
+            $('.name_list').each(function(){
+                i++
+            })
+            alert('จำนวน : '+i)
+
+            let form_data = $('.name_list').serialize()
+            $.ajax({
+                url : "",
+                method : "POST",
+                data : form_data,
+                success : function( response ){
+                }
+            })
+        })
+    })
+</script>
+{% endblock %}

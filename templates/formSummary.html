@@ -1,6 +1,12 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1 align="center">Result</h1>
+
+<div class="form-group" style="text-align: center; margin-bottom:0px;">
+    <label class="form-check-label">
+        <h1>Result</h1>
+    </label>
+</div>
+
 <span class="col-md-6">
     <form class="form-inline my-2 my-lg-0" method="GET" action="/resultForm">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value="{{request.GET.search}}" name="search" disabled="true">
@@ -43,17 +49,22 @@
             <th scope="col">Type</th>
             <th scope="col">Book Number</th>
             <th scope="col">Descriptions</th>
-            <th scope="col">General</th>
+
+            <!-- <th scope="col">General</th>
             <th scope="col">Electical General</th>
             <th scope="col">Electical Techniques</th>
             <th scope="col">Network General</th>
-            <th scope="col">Network Techniques</th>
-            <th scope="col">Create by ID</th>
+            <th scope="col">Network Techniques</th> -->
+
+            <th scope="col">Result</th>
+
+            <!-- <th scope="col">Create by ID</th>
             <th scope="col">Create at</th>
             <th scope="col">Update by</th>
-            <th scope="col">Update at</th>
+            <th scope="col">Update at</th> -->
             <th scope="col">Edit</th>
             <th scope="col">Delete</th>
+            
         </tr>
         </thead>
         <tbody>
@@ -64,50 +75,64 @@
                 <td>{{result.name}}</td>
                 <td>{{result.types}}</td>
                 <td><a class="text-decoration-none" id="ModalCenter" name="ModalCenter" data-toggle="modal" data-target="#exampleModalCenter" value="{{result.result_id}}" href="{{result.name}}">{{result.book_number}}</a></td>
-                <!-- <td><p class="text-decoration-none" id="ModalCenter" name="ModalCenter" data-toggle="modal" data-target="#exampleModalCenter" value="{{result.result_id}}">{{result.book_number}}</p></td> -->
                 <td>{{result.descriptions}}</td>
-                <td>
-                    {% if result.g == 1 %}
+
+                <!-- <td>
+                    {% if result.g >= 1 %}
                         <i class="fa fa-check"></i>
                     {% else %}
                         <i class="fa fa-times"></i>
                     {% endif %}
                 </td>
                 <td>
-                    {% if result.e_g == 1 %}
+                    {% if result.e_g >= 1 %}
                         <i class="fa fa-check"></i>
                     {% else %}
                         <i class="fa fa-times"></i>
                     {% endif %}
                 </td>
                 <td>
-                    {% if result.e_t == 1 %}
+                    {% if result.e_t >= 1 %}
                         <i class="fa fa-check"></i>
                     {% else %}
                         <i class="fa fa-times"></i>
                     {% endif %}
                 </td>
                 <td>
-                    {% if result.n_g == 1 %}
+                    {% if result.n_g >= 1 %}
                         <i class="fa fa-check"></i>
                     {% else %}
                         <i class="fa fa-times"></i>
                     {% endif %}
                 </td>
                 <td>
-                    {% if result.n_t == 1 %}
+                    {% if result.n_t >= 1 %}
                         <i class="fa fa-check"></i>
                     {% else %}
                         <i class="fa fa-times"></i>
                     {% endif %}
+                </td> -->
+
+                <td>
+                    {% if result.result_flag == '1' %}
+                        <a class="result" id="ModalCenter" name="ModalCenter" data-toggle="modal" data-target="#ModalResultFlag" value="{{result.result_id}}">
+                            <i class="fa fa-check"></i>
+                        </a>
+                    {% else %}
+                        <a class="result" id="ModalCenter" name="ModalCenter" data-toggle="modal" data-target="#ModalResultFlag" value="{{result.result_id}}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    {% endif %}
                 </td>
-                <td>{{result.create_by_id}}</td>
+
+                <!-- <td>{{result.create_by_id}}</td>
                 <td>{{result.create_at}}</td>
                 <td>{{result.update_by}}</td>
-                <td>{{result.update_at}}</td>
+                <td>{{result.update_at}}</td> -->
+                
                 <td>
                     <form class="form-inline my-2 my-lg-0" method="GET" action="/formEditResult">
-                        <button class="btn btn-outline-warning my-2 my-sm-0" name="edit" value="{{result.result_id}}" type="submit">Edit</button>
+                        <button class="btn btn-outline-warning my-2 my-sm-0" name="edit" value="{{result.result_id}}" type="submit">Edit</button>                 
                     </form>
                 </td>
                 <td>
@@ -145,6 +170,28 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="ModalResultFlag" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Result</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row">
+                <div class="col-md-6" id="content_specifications">
+                    <!-- Content -->
+                </div>
+                <div class="col-md-6" id="content_result">
+                    <!-- Content -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <script>
     $(document).ready(function(){
@@ -166,6 +213,37 @@
                     for(let i = 0; i < response.length ; i++){
                         console.log(response[i].fields.path) 
                         $('#content').append('<div class="form-group">' + '<a class="text-decoration-none" href="'+ response[i].fields.path +'" > File ' + (i+1) + '</a>' + '</div>')
+                    }
+                }
+            })
+        })
+
+
+
+        $('.result').click(function(){
+            var result_id = $(this).attr('value')
+            console.log(result_id)
+            // $('#exampleModalLongTitle').html('')
+            // $('#exampleModalLongTitle').append($(this).attr('href'))
+            $.ajax({
+                url: '/getResult/',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    result_id : result_id
+                },
+                success: function( response ){
+                    console.log('Response : ', response)
+                    $('#content_specifications').html('')
+                    $('#content_result').html('')
+                    for(let i = 0; i < response.length ; i++){
+                        console.log(response[i].fields.result_flag)
+                        let result_flag = 'Improve'
+                        if (response[i].fields.result_flag == 1){
+                            result_flag = 'Pass'
+                        }
+                        $('#content_specifications').append('<div class="form-group">' + response[i].fields.specifications + '</div>')
+                        $('#content_result').append('<div class="form-group">' + result_flag + ' : ' + response[i].fields.remark + '</div>')
                     }
                 }
             })

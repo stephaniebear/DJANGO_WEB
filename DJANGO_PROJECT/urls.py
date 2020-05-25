@@ -37,12 +37,15 @@ urlpatterns = [
     path('editResult/',views.editResult),
     path('formEditResult/',views.formEditResult),
     path('office/',views.office),
-    path('testForm/',views.formLoadTest),
     path('likePost/',views.likePost),
     path('getProvinceName/',views.getProvinceName),
     path('getOfficeType/',views.getOfficeType),
 
     path('getFiles/',views.getFiles),
+    path('getResult/',views.getResult),
+
+    path('formAddCheckList/',views.formAddCheckList),
+    path('formCheckList/',views.formCheckList),
 
     #---------- Asset ----------
     path('formAddAsset/',views.formAddAsset),

@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<h1 align="center">Form Check List</h1>
+
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    <form action="/login/" method="POST">
+        {% csrf_token %}
+        
+    </form>
+</div>
+{% endblock %}
