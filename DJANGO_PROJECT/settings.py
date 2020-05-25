@@ -86,6 +86,8 @@ DATABASES = {
     }
 }
 
+DATABASES['default'] = dj_database_url.config(default='ec2-34-200-72-77.compute-1.amazonaws.com'}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
