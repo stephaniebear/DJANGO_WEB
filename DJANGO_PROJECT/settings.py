@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '&wkab5mu*ub5m1%raq_vq^=8s_h(vyqix-g=c5^l!k1)=l(1v*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['https://git.heroku.com/stephanie-project.git']
 
@@ -86,7 +86,7 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = dj_database_url.config(default='postgres://ypwryijxwqwnui:2be95ae372b2f939291b5402021f2f938f6cda98fc255d145f20d5013a44a817@ec2-34-200-72-77.compute-1.amazonaws.com:5432/db46ttlgi7nakb'}
+DATABASES['default'] = dj_database_url.config(default='postgres://ypwryijxwqwnui:2be95ae372b2f939291b5402021f2f938f6cda98fc255d145f20d5013a44a817@ec2-34-200-72-77.compute-1.amazonaws.com:5432/db46ttlgi7nakb')
 
 
 # Password validation
