@@ -86,7 +86,7 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = dj_database_url.config(default='ec2-34-200-72-77.compute-1.amazonaws.com'}
+DATABASES['default'] = dj_database_url.config(default='postgres://ypwryijxwqwnui:2be95ae372b2f939291b5402021f2f938f6cda98fc255d145f20d5013a44a817@ec2-34-200-72-77.compute-1.amazonaws.com:5432/db46ttlgi7nakb'}
 
 
 # Password validation
