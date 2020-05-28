@@ -1,6 +1,6 @@
 # DJANGO_WEB
 
-#Virtual Enviroment
+# Virtual Enviroment
 python -m venv venv
 
 pip install -r requirements.txt
