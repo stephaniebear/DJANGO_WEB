@@ -10,6 +10,8 @@ import json
 from django.utils import timezone
 import pytz
 
+import csv, io #CSV Files
+
 from django.core.files.storage import FileSystemStorage #BOOK FILES
 import os
 
@@ -33,7 +35,6 @@ def formAccount(request):
         'email' : email
     })
 
-
 def Home(request):
     #Query Data From Model
     data = Post.objects.all()
@@ -52,6 +53,18 @@ def formAddResult(request):
 
     print('formAddResult')
 
+    # time_zone = pytz.timezone("Asia/Bangkok")
+    # utc_dt = timezone.now()
+    # loc_dt = utc_dt.astimezone(time_zone)
+
+    # print('Zone : ', loc_dt.year+543)
+    # #format_time = '%Y-%m-%d %H:%M:%S %Z (%z)'
+    # format_time = '%B'
+    # # time_stamp = str(loc_dt.strftime(format_time))
+    # time_stamp = str(loc_dt.day) + ' ' + str(loc_dt.strftime(format_time)) + ' ' + str(loc_dt.year+543)
+
+    # print('Time : ', time_stamp)
+
     if request.method == 'POST':
         def get_timestamp():
             time_zone = pytz.timezone("Asia/Bangkok")
@@ -64,30 +77,44 @@ def formAddResult(request):
 
         print('Time Stamp : ', get_timestamp())
 
+
+        ##### GET Office Type #####
+
+        name = request.POST['name']
+        OfficeQuerys = Office.objects.filter(name__icontains=name)
+
+        for OfficeQuery in OfficeQuerys:
+            print('Type : ', OfficeQuery.types)
+            type_office = str(OfficeQuery.types)
+
+        ###########################
+
         ##########################################################################################
         number = request.POST['number']
         name = request.POST['name']
-        type_office = request.POST['type']
+        #type_office = request.POST['type']
         specs_general = request.POST['specs_general']
         specs_elec_general = request.POST['specs_elec_general']
         specs_elec_techniques = request.POST['specs_elec_techniques']
         specs_network_general = request.POST['specs_network_general']
         specs_network_techniques = request.POST['specs_network_techniques']
         book_number = request.POST['book_number']
+        book_date = request.POST['book_date']
         descriptions = request.POST['descriptions']
         username = request.user
 
-        print('number : ',number)
-        print('name : ',name)
-        print('Type : ',type_office)
-        print('specs_general : ',specs_general)
-        print('specs_elec_general : ',specs_elec_general)
-        print('specs_elec_techniques : ',specs_elec_techniques)
-        print('specs_network_general : ',specs_network_general)
-        print('specs_network_techniques : ',specs_network_techniques)
-        print('book_number : ',book_number)
-        print('descriptions : ',descriptions)
-        print('username : ',username)
+        print('number : ', number)
+        print('name : ', name)
+        print('Type : ', type_office)
+        print('specs_general : ', specs_general)
+        print('specs_elec_general : ', specs_elec_general)
+        print('specs_elec_techniques : ', specs_elec_techniques)
+        print('specs_network_general : ', specs_network_general)
+        print('specs_network_techniques : ', specs_network_techniques)
+        print('book_number : ', book_number)
+        print('book_date : ', book_date)
+        print('descriptions : ', descriptions)
+        print('username : ', username)
 
         #ผลรวมว่าผ่านหรือไม่ : 1 คือผ่าน, 0 คือไม่ผ่าน
         if specs_general == '1' and specs_elec_general == '1' and specs_elec_techniques == '1' and specs_network_general == '1' and specs_network_techniques == '1':
@@ -166,27 +193,77 @@ def formAddResult(request):
 
         ##########################################################################################
         #ลำดับสำนักงาน + ผลการตรวจ + ลำดับไฟล์ + เวลา : F1_1_1_20200515132421.jpg
-        files = request.FILES.getlist('files')
-        time_stamp = get_timestamp()
+
+        # files = request.FILES.getlist('files')
+        # time_stamp = get_timestamp()
+        # paths = []
+        # sizes = []
+        # if files:
+        #     print('Found files')
+        #     for count, x in enumerate(files):
+        #         def handle_uploaded_file(f):
+        #             print('Size : ', f.size)
+        #             sizes.append(f.size)
+        #             file_extension = str(f).split('.') #หานามสกุลไฟล์
+        #             print('File extension : ', file_extension[1])
+        #             path = 'BOOK_FILES/F_' + number + '_' + result_flag + '_' + str(count + 1) + '_' + time_stamp + '.' + file_extension[1]
+        #             paths.append(path)
+        #             print('Path : ', path)
+        #             print('Lenght : ', len(paths))
+        #             # with open(path, 'wb+') as destination:
+        #             #     for chunk in f.chunks():
+        #             #         destination.write(chunk)
+        #         handle_uploaded_file(x)
+        # else:
+        #     print('Can\'t found files')
+        #     messages.info(request,'Please input your book file !')
+        #     return redirect('/formAddResult')
+
+
+        #ลำดับสำนักงาน + ผลการตรวจ + ลำดับไฟล์ + เวลา : F1_1_1_20200515132421.jpg
+
+        result_files = request.FILES.getlist('result_files')
+        checklist_files = request.FILES.getlist('checklist_files')
+        memo_files = request.FILES.getlist('memo_files')
+        atp_files = request.FILES.getlist('atp_files')
+
         paths = []
         sizes = []
-        if files:
+        files_name = []
+
+        def handle_uploaded_file(f, name):
+            print('Size : ', f.size)
+            sizes.append(f.size)
+            file_extension = str(f).split('.') #หานามสกุลไฟล์
+            print('File extension : ', file_extension[1])
+            path = 'BOOK_FILES/' + name + '_' + number + '_' + result_flag + '_' + str(count + 1) + '_' + time_stamp + '.' + file_extension[1]
+            paths.append(path)
+            print('Path : ', path)
+            print('Lenght : ', len(paths))
+            files_name.append(name)
+            # with open(path, 'wb+') as destination:
+            #     for chunk in f.chunks():
+            #         destination.write(chunk)
+
+        time_stamp = get_timestamp()
+        if result_files:
             print('Found files')
-            for count, x in enumerate(files):
-                def handle_uploaded_file(f):
-                    print('Size : ', f.size)
-                    sizes.append(f.size)
-                    file_extension = str(f).split('.') #หานามสกุลไฟล์
-                    print('File extension : ', file_extension[1])
-                    path = 'BOOK_FILES/F_' + number + '_' + result_flag + '_' + str(count + 1) + '_' + time_stamp + '.' + file_extension[1]
-                    paths.append(path)
-                    print('Path : ', path)
-                    print('Lenght : ', len(paths))
-                    # with open(path, 'wb+') as destination:
-                    #     for chunk in f.chunks():
-                    #         destination.write(chunk)
-                handle_uploaded_file(x)
-                
+            for count, x in enumerate(result_files):
+                handle_uploaded_file(x, 'Result')
+        if checklist_files:
+            print('Found files')
+            for count, x in enumerate(checklist_files):
+                handle_uploaded_file(x, 'Checklist')
+        if memo_files:
+            print('Found files')
+            for count, x in enumerate(memo_files):
+                handle_uploaded_file(x, 'Memo')
+        if atp_files:
+            print('Found files')
+            for count, x in enumerate(atp_files):
+                handle_uploaded_file(x, 'ATP')
+            
+            print(files_name)
         else:
             print('Can\'t found files')
             messages.info(request,'Please input your book file !')
@@ -199,7 +276,7 @@ def formAddResult(request):
             name=name,
             types=type_office,
             result_flag=result_flag,
-            book_number=book_number,
+            book_number=book_number + ' ลงวันที่ ' + book_date,
             descriptions=descriptions,
             create_by=username,
             update_by=username,
@@ -210,14 +287,15 @@ def formAddResult(request):
         ResultQuerys = Result.objects.filter(name__icontains=name)
         print('ResultQuery : ', ResultQuerys)
         for ResultQuery in ResultQuerys:
-            print('UUID : ',ResultQuery.result_id)
-            result_id=str(ResultQuery.result_id)
+            print('UUID : ', ResultQuery.result_id)
+            result_id = str(ResultQuery.result_id)
 
         for i in range(0,len(paths)):
             Files.objects.get_or_create(
                 result_id=Result(result_id=result_id),
                 path=paths[i],
-                size=sizes[i]
+                size=sizes[i],
+                name=files_name[i]
             )
 
         ResultDetails.objects.get_or_create(
@@ -260,6 +338,8 @@ def formAddResult(request):
 
             provinces = Office.objects.values('province').distinct().order_by('province')
             #offices = Office.objects.values('office_name').distinct().order_by('office_name')
+
+            print('Province : ', provinces)
 
             offices = Office.objects.all().order_by('number')
             
@@ -320,6 +400,9 @@ def addResult(request):
             return time_stamp
 
         print('Time Stamp : ', get_timestamp())
+
+
+
 
         ##########################################################################################
         number = request.POST['number']
@@ -513,7 +596,6 @@ def addResult(request):
     return redirect('/resultForm')
 
 def result(request):
-
     #Query Data From Model
     #dataResult=Result.objects.all()
 
@@ -527,16 +609,29 @@ def result(request):
     #    FROM blogs_result 
     #    '''
 
+    # SQL = '''
+    #     SELECT r.result_id, f.path, r.number, r.name, r.types, r.book_number, r.`descriptions` , r.result_flag,
+    #         SUM(IF(specifications='General',rd.result_flag,0)) AS 'g',
+    #         SUM(IF(specifications='Electical General',rd.result_flag,0)) AS 'e_g',
+    #         SUM(IF(specifications='Electical Techniques',rd.result_flag,0)) AS 'e_t',
+    #         SUM(IF(specifications='Network General',rd.result_flag,0)) AS 'n_g',
+    #         SUM(IF(specifications='Network Techniques',rd.result_flag,0)) AS 'n_t'
+    #         FROM blogs_result r
+    #         INNER JOIN  blogs_resultdetails rd ON r.result_id = rd.result_id_id INNER JOIN blogs_files f ON r.result_id = f.result_id_id
+    # '''
+
     SQL = '''
-        SELECT r.result_id, f.path, r.number, r.name, r.types, r.book_number, r.`descriptions` , r.result_flag,
+        SELECT r.result_id, r.number, r.name, r.types, r.book_number, r.`descriptions` , r.result_flag,
             SUM(IF(specifications='General',rd.result_flag,0)) AS 'g',
             SUM(IF(specifications='Electical General',rd.result_flag,0)) AS 'e_g',
             SUM(IF(specifications='Electical Techniques',rd.result_flag,0)) AS 'e_t',
             SUM(IF(specifications='Network General',rd.result_flag,0)) AS 'n_g',
             SUM(IF(specifications='Network Techniques',rd.result_flag,0)) AS 'n_t'
             FROM blogs_result r
-            INNER JOIN  blogs_resultdetails rd ON r.result_id = rd.result_id_id INNER JOIN blogs_files f ON r.result_id = f.result_id_id
+            INNER JOIN  blogs_resultdetails rd ON r.result_id = rd.result_id_id
     '''
+
+    
     query = request.GET.get ("search")
     #แก้เซิสหาหลาย ๆ คำ 
     #if query:
@@ -552,7 +647,9 @@ def result(request):
         OR `descriptions` LIKE '%%'''+ query +'''%%' 
         '''
 
-    SQL += '''GROUP BY name'''
+    SQL += '''GROUP BY r.name
+    ORDER BY CONVERT(r.number, INT) ASC
+    '''
 
     print(SQL)
 
@@ -606,7 +703,7 @@ def addUser(request):
                 first_name=firstname,
                 last_name=lastname
             )
-            User.objects.save()
+            # User.objects.save()
             return redirect('/')
     else:
         print("Password ไม่ตรงกัน")
@@ -866,9 +963,9 @@ def getFiles(request):
         print('getFiles')
         result_id = request.GET['result_id'].replace('-','')
         print('result_id : ',result_id)
-        query_set = Files.objects.filter(result_id=result_id)
+        query_set = Files.objects.filter(result_id=result_id).order_by('path')
 
-        print('Query Set : ', query_set)        
+        print('Query Set : ', query_set)
 
         files = serializers.serialize("json", query_set)
         print('files :', files)
@@ -888,8 +985,6 @@ def getResult(request):
         return HttpResponse(result, content_type="application/json")
 #-------------------------------------------------
 
-
-
 #-------------------- Check List --------------------
 
 def formAddCheckList(request):
@@ -900,3 +995,144 @@ def formCheckList(request):
     return render(request,'formCheckList.html')
 
 #----------------------------------------------------
+
+
+def CSVFiles(request):
+    # csv_file = request.FILES['file']
+
+    csv_file = request.FILES.get('file', None)
+
+    if csv_file:
+        print('CSV : ', csv_file)
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, 'This is not a CSV file')
+        else:
+            data_set = csv_file.read().decode('UTF-8')
+            io_string = io.StringIO(data_set)
+            next(io_string)
+            for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+                print('ลำดับ : ',column[0])
+                print('ชื่อ : ', column[1])
+                print('ทั่วไป : ',column[2])
+                print('ไฟฟ้า ทั่วไป :' ,column[3])
+                print('ไฟฟ้า เทคนิค : ',column[4])
+                print('สัญญาณ ทั่วไป : ',column[5])
+                print('สัญญาณ เทคนิค : ',column[6])
+                print('เลขหนังสือ : ',column[7])
+                print('หมายเหตุ : ',column[8])
+
+                user_id=request.user
+
+                number=column[0]
+                name=column[1]
+                specs_general=column[2]
+                specs_elec_general=column[3]
+                specs_elec_techniques=column[4]
+                specs_network_general=column[5]
+                specs_network_techniques=column[6]
+                book_number=column[7]
+                remark=column[8]
+
+                result_flag = '0'
+                #ผลรวมว่าผ่านหรือไม่ : 1 คือผ่าน, 0 คือไม่ผ่าน
+                if specs_general == '1' and specs_elec_general == '1' and specs_elec_techniques == '1' and specs_network_general == '1' and specs_network_techniques == '1':
+                    result_flag = '1'
+                else:
+                    result_flag = '0'
+
+                ##### GET Office Type #####
+                OfficeQuerys = Office.objects.filter(name__icontains=name)
+                for OfficeQuery in OfficeQuerys:
+                    print('Type : ', OfficeQuery.types)
+                    type_office = str(OfficeQuery.types)
+                ###########################
+
+                Result.objects.create(
+                    number=number,
+                    name=name,
+                    types=type_office,
+                    book_number=book_number,
+                    result_flag=result_flag,
+                    descriptions=remark,
+                    create_by=user_id,
+                    update_by=user_id,
+                    status_flag=1,
+                )
+
+                ##### GET Result ID #####
+                ResultQuerys = Result.objects.filter(name__icontains=name)
+                for ResultQuery in ResultQuerys:
+                    print('Type : ', ResultQuery.result_id)
+                    result_id = str(ResultQuery.result_id)
+                ###########################
+
+                ResultDetails.objects.get_or_create(
+                    result_id=Result(result_id=result_id),
+                    specifications='General',
+                    result_flag=specs_general,
+                    remark=remark
+                )
+
+                ResultDetails.objects.get_or_create(
+                    result_id=Result(result_id=result_id),
+                    specifications='Electical General',
+                    result_flag=specs_elec_general,
+                    remark=remark
+                )
+
+                ResultDetails.objects.get_or_create(
+                    result_id=Result(result_id=result_id),
+                    specifications='Electical Techniques',
+                    result_flag=specs_elec_techniques,
+                    remark=remark
+                )
+
+                ResultDetails.objects.get_or_create(
+                    result_id=Result(result_id=result_id),
+                    specifications='Network General',
+                    result_flag=specs_network_general,
+                    remark=remark
+                )
+
+                ResultDetails.objects.get_or_create(
+                    result_id=Result(result_id=result_id),
+                    specifications='Network Techniques',
+                    result_flag=specs_network_techniques,
+                    remark=remark
+                )
+    else:
+        messages.error(request, 'Not found CSV file')
+
+    return redirect('/')
+
+
+def profile_upload(request):
+    # declaring template
+    template = "profile_upload.html"
+    data = Profile.objects.all()
+    # prompt is a context variable that can have different values      depending on their context
+    prompt = {
+        'order': 'Order of the CSV should be name, email, address,    phone, profile',
+        'profiles': data    
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+        _, created = Profile.objects.update_or_create(
+            name=column[0],
+            email=column[1],
+            address=column[2],
+            phone=column[3],
+            profile=column[4]
+        )
+    context = {}
+    return render(request, template, context)

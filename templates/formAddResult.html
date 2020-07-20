@@ -38,7 +38,7 @@
       <select class="form-control" name="province" id="office_provinces">
         <option value="0">- Please Select Provinces -</option>
         {% for province in provinces %}
-        <option value="{{province.province}}">{{province.province}}</option>
+          <option value="{{province.province}}">{{province.province}}</option>
         {% endfor %}
       </select>
     </div>
@@ -49,7 +49,8 @@
           <option value="0">- Please Select Office Name -</option>
         </select>
     </div>
-
+    
+<!-- 
     <div class="form-group">
       <label for="Type"><b>Type</b></label>
       <BR>
@@ -66,9 +67,8 @@
           <input  id="office_type_C" type="radio" class="form-check-input" name="type" value="C">
           <label class="form-check-label" for="office_type_A">C</label>
         </div>
-        
       </div>
-    </div>
+    </div> -->
 
     <div class="form-group">
         <label for="Specifications"><b>Specifications</b></label>
@@ -175,8 +175,13 @@
     </fieldset>
 
     <div class="form-group">
-        <label for="Book Number" ><b>Book Number</b></label>
-        <input type="text" class="form-control" name="book_number" id="book_number">
+      <label for="Book Number" ><b>Book Number</b></label>
+      <input type="text" class="form-control" name="book_number" id="book_number">
+    </div>
+
+    <div class="form-group">
+      <label for="Add date" ><b>Book Date</b></label>
+      <input class="form-control" type="date" name="book_date" id="book_date">
     </div>
 
     <div class="form-group">
@@ -185,17 +190,50 @@
     </div>
 
     <div class="form-group">
+      <label for="Result Files"><b>Upload Result</b></label>
+      <input style="padding:2.5px;" class="form-control" type="file" name="result_files" id="result_files" multiple/>
+    </div>
+
+    <div class="form-group">
+      <label for="Checklist Files"><b>Upload Checklist</b></label>
+      <input style="padding:2.5px;" class="form-control" type="file" name="checklist_files" id="checklist_files" multiple/>
+    </div>
+
+    <div class="form-group">
+      <label for="Memo Files"><b>Upload Memo Meeting</b></label>
+      <input style="padding:2.5px;" class="form-control" type="file" name="memo_files" id="memo_files" multiple/>
+    </div>
+
+    <div class="form-group">
+      <label for="ATP Files"><b>Upload ATP</b></label>
+      <input style="padding:2.5px;" class="form-control" type="file" name="atp_files" id="atp_files" multiple/>
+    </div>
+
+    <!-- <div class="form-group">
       <label for="Files"><b>Upload Sheet</b></label>
       <input style="padding:2.5px;" class="form-control" type="file" name="files" id="files" multiple/>
-    </div>
+    </div> -->
 
     <div class="form-group">
       <input type="submit" id="submit" class="btn btn-success" value="Save">
     </div>
+
 </form>
 
 <script>
   $(document).ready(function(){
+    let date_now = new Date()
+    let year = date_now.getFullYear()
+    let month = ((date_now.getMonth()+1) < 10 ? '0' + (date_now.getMonth()+1) : date_now.getMonth()+1)
+    let day = (date_now.getDate() < 10 ? '0' + date_now.getDate() : date_now.getDate() )
+
+    $('#book_date').attr('value' , year + '-' + month + '-' + day)
+
+    $('#book_date').click(function(){
+      console.log('Click')
+      $('#book_date').datepicker()
+    })
+
     $('#submit').click(function(){
 
       // console.log($('#files').val())
@@ -220,13 +258,39 @@
         $('#book_number').focus()
         return false;
       }
+      else if($('#result_files').val() == ''){
+        $('#result_files').addClass('is-invalid')
+        $('#result_files').focus()
+        return false;
+      }
+      else if($('#checklist_files').val() == ''){
+        $('#checklist_files').addClass('is-invalid')
+        $('#checklist_files').focus()
+        return false;
+      }
+      else if($('#memo_files').val() == ''){
+        $('#memo_files').addClass('is-invalid')
+        $('#memo_files').focus()
+        return false;
+      }
+      else if($('#atp_files').val() == ''){
+        $('#atp_files').addClass('is-invalid')
+        $('#atp_files').focus()
+        return false;
+      }
       else if($('#files').val() == ''){
         $('#files').addClass('is-invalid')
         $('#files').focus()
         return false;
       }
+      // else if($('#files').val() == ''){
+      //   $('#files').addClass('is-invalid')
+      //   $('#files').focus()
+      //   return false;
+      // }
     })
   })
+
 </script>
 
 {% endblock %}

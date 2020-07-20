@@ -24,7 +24,7 @@ urlpatterns = [
     path('',views.result),
     path('account/', views.formAccount),
     path('admin/', admin.site.urls),
-    path('page1/',views.Page1),
+    path('CSVFiles/',views.CSVFiles),
     path('formAddResult/',views.formAddResult),
     path('addResult/',views.addResult),
     path('resultForm/',views.result),

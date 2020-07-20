@@ -55,11 +55,10 @@ class Files(models.Model):
     result_id = models.ForeignKey(Result, on_delete=models.CASCADE)
     size = models.CharField(max_length=100)
     path = models.FileField()
+    name = models.CharField(max_length=100)
     
     def __str__(self):
         return str(self.files_id)
-
-
 
 #---------- ครุภัณฑ์ ----------
 class Location(models.Model):
